@@ -2,12 +2,12 @@ console.log('Starting notes.js');
 const fs = require('fs');
 
 var fetchNotes = () => {
-    try{        
+    try {
         var notesString = fs.readFileSync('notes-data.json');
         return JSON.parse(notesString)
-    }catch(e){
+    } catch (e) {
         return [];
-    } 
+    }
 };
 
 var saveNotes = (notes) => {
@@ -19,10 +19,10 @@ var addNote = (title, body) => {
     var note = {
         title,
         body
-    };       
+    };
 
     var duplicateNotes = notes.filter((note) => note.title === title);
-    if(duplicateNotes.length === 0) {
+    if (duplicateNotes.length === 0) {
         notes.push(note);
         saveNotes(notes);
         return note;
@@ -34,13 +34,23 @@ var getAll = () => {
 };
 
 var getNote = (title) => {
-    console.log('Getting note', title);
+    var notes = fetchNotes();
+    var filteredNotes = notes.filter((note) => note.title === title);
+    return filteredNotes[0];
 }
 
 var removeNote = (title) => {
-    console.log('Removing note', title);
+    var notes = fetchNotes();
+    var filteredNotes = notes.filter((note) => note.title !== title);
+    saveNotes(filteredNotes);
+    return notes.length !== filteredNotes.length;
 }
 
+var logNote = (note) => {
+    console.log('--');
+    console.log(`Title: ${note.title}`);
+    console.log(`Body: ${note.body}`);
+};
 
 
 module.exports = {
@@ -51,8 +61,9 @@ module.exports = {
      * you can actually leave off the colon and the value. Either way, the result
      * identical.
      */
-    addNote, 
+    addNote,
     getAll,
     getNote,
-    removeNote
+    removeNote,
+    logNote
 }
